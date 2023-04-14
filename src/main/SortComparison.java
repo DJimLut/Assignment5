@@ -24,12 +24,12 @@ public class SortComparison {
         boolean useLetters = true;
         boolean useNumbers = false;
 
-        String[][] radixArr = new String[200000][25];
+        String[][] radixArr = new String[25][200000];
 
         for(int i = 0; i < radixArr.length; i++) {
             for(int j = 0; j < radixArr[i].length; j++) {
                 // For every string in every string array, assign a random string with its index as its length, using only letters
-                radixArr[i][j] = RandomStringUtils.random(j + 1, useLetters, useNumbers); 
+                radixArr[i][j] = RandomStringUtils.random(i + 1, useLetters, useNumbers);
             }
         }
 
@@ -40,7 +40,7 @@ public class SortComparison {
         long startTime;
         long radixTime;
         long heapTime;
-        for(int i = 0; i < 25; i++) {
+        for(int i = 0; i < radixArr.length; i++) {
             // Sort every string array, calculate the time and format it
             startTime = System.nanoTime();
             radixSort(radixArr[i]);
@@ -50,7 +50,7 @@ public class SortComparison {
             heapSort(heapArr[i]);
             heapTime = (System.nanoTime() - startTime) / 1000000;
 
-            System.out.printf("%d\t%d\t%d\t%d%n", radixArr.length, radixArr[i][i].length(), heapTime, radixTime);
+            System.out.printf("%d\t%d\t%d\t%d%n", radixArr[i].length, radixArr[i][i].length(), heapTime, radixTime);
         }
     }
 }
