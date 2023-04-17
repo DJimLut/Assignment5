@@ -13,61 +13,43 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class SortComparison {
 
     //Radix Sort
-    //Credit: GeeksforGeeks, https://www.geeksforgeeks.org/radix-sort/
-    public static void radixSort(String input[], 
-                                 int radix,
-                                 int width)
+    public static void radixSort(String[] arr)
     {
-        for (int i = 0; i < width; i++) {
-            performRadixSort(input, i, radix);
+        String[] arrCopy = arr.clone();
+        int stringLength = arrCopy[0].length();
+        //Current randomizer has more than just lowercase letters so radix/max value is 256 to accommodate (ASCII)
+        int radix = 256;
+        String[] temp = new String[arrCopy.length];
+     
+        //Count how many strings have each character at current position
+        //Works right to left
+        for (int i = stringLength - 1; i >= 0; i--)
+        {
+            int[] count = new int[radix];
+            //Get the character at the current position in string at j
+            for (int j = 0; j < arr.length; j++)
+            {
+                char currentChar = arrCopy[j].charAt(i);
+                count[currentChar]++;
+            }
+            //Keep track of how many strings have each character up to, including current one
+            for (int j = 1; j < radix; j++)
+            {
+                count[j] += count[j - 1];
+            }
+            //Reordering in temp array based on character
+            for (int j = arrCopy.length - 1; j >= 0; j--)
+            {
+                char currentChar = arrCopy[j].charAt(i);
+                int tempIndex = --count[currentChar];
+                temp[tempIndex] = arrCopy[j];
+            }
+            //Copy sorted strings back into original array
+            for (int j = 0; j < arrCopy.length; j++)
+            {
+                arrCopy[j] = temp[j];
+            }
         }
-    }
-    public static void performRadixSort(String input[],
-                                        int position,
-                                        int radix)
-    {
-        
-        // Creating a temporary count array
-        int countArray[] = new int[radix];
-        int nos = input.length;
-        
-        // Populating the count array
-        for (String value : input) {
-            countArray[getDigit(position, 
-                                value, radix)]++;
-        }
-      
-        // Normalizing count array
-        for (int i = 1; i < radix; i++) {
-            countArray[i]
-                = countArray[i] 
-                + countArray[i - 1];
-        }
-      
-        String tempArray[] = new String[nos];
-        // Building the final temporary array
-        for (int i = nos - 1; i >= 0; i--) {
-            tempArray[--countArray[getDigit(
-                position, input[i], radix)]]
-                = input[i];
-        }
-        // Copying into the actual array
-        for (int i = 0; i < nos; i++) {
-            input[i] = tempArray[i];
-        }
-    }
-    // Hashing the input value, radix = 26
-    // It takes the character at 
-    // (length - position) location
-    // and convert it to ascii value and 
-    // return the ascii value
-    public static int getDigit(int position, 
-                               String value,
-                               int radix)
-    {
-        int nos = value.length() - 1;
-        char c = value.toLowerCase().charAt(nos - position);
-        return (int)c - 97;
     }
 
 
@@ -165,14 +147,14 @@ public class SortComparison {
         for(int i = 0; i < radixArr.length; i++) {
             // Sort every string array, calculate the time and format it
             startTime = System.nanoTime();
-            radixSort(radixArr[i], 26, radixArr[0].length);
+            radixSort(radixArr[i]);
             radixTime = (System.nanoTime() - startTime) / 1000000;
 
             startTime = System.nanoTime();
             heapSort(heapArr[i]);
             heapTime = (System.nanoTime() - startTime) / 1000000;
 
-            System.out.printf("%d\t%d\t\t%d\t\t%d%n", radixArr[i].length, radixArr[i][i].length(), heapTime, radixTime);
+            System.out.printf("%d\t%d\t%d\t%d%n", radixArr[i].length, radixArr[i][i].length(), heapTime, radixTime);
         }
     }
 }
